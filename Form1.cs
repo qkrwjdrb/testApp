@@ -259,7 +259,7 @@ namespace testApp
             }
         }
         #endregion
-
+        
         #region 제어 함수
 
         ushort opid = 0;
@@ -664,12 +664,12 @@ namespace testApp
         }
         #endregion
 
-        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        private void device5Box_Enter(object sender, EventArgs e)
         {
 
         }
 
-        private void device2Box_Enter(object sender, EventArgs e)
+        private void device3Box_Enter(object sender, EventArgs e)
         {
 
         }
