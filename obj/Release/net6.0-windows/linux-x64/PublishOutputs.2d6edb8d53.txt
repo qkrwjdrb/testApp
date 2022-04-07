@@ -1,0 +1,2 @@
+C:\C#_project\linuxTestApp\testApp.pdb
+C:\C#_project\linuxTestApp\testApp

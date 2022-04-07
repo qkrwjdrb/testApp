@@ -268,11 +268,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\mioli\\source\\repos\\testApp\\testApp.csproj",
+      "projectUniqueName": "C:\\C#_project\\testApp\\testApp.csproj",
       "projectName": "testApp",
-      "projectPath": "C:\\Users\\mioli\\source\\repos\\testApp\\testApp.csproj",
+      "projectPath": "C:\\C#_project\\testApp\\testApp.csproj",
       "packagesPath": "C:\\Users\\mioli\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\mioli\\source\\repos\\testApp\\obj\\",
+      "outputPath": "C:\\C#_project\\testApp\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

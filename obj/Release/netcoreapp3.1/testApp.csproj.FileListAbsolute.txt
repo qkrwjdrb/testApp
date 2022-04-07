@@ -1,0 +1,7 @@
+C:\C#_project\testApp\obj\Release\netcoreapp3.1\testApp.csproj.AssemblyReference.cache
+C:\C#_project\testApp\obj\Release\netcoreapp3.1\testApp.Form1.resources
+C:\C#_project\testApp\obj\Release\netcoreapp3.1\testApp.csproj.GenerateResource.cache
+C:\C#_project\testApp\obj\Release\netcoreapp3.1\testApp.GeneratedMSBuildEditorConfig.editorconfig
+C:\C#_project\testApp\obj\Release\netcoreapp3.1\testApp.AssemblyInfoInputs.cache
+C:\C#_project\testApp\obj\Release\netcoreapp3.1\testApp.AssemblyInfo.cs
+C:\C#_project\testApp\obj\Release\netcoreapp3.1\testApp.csproj.CoreCompileInputs.cache

@@ -2,6 +2,15 @@ using Google.Protobuf;
 using Grpc.Core;
 using Grpc.Net.Client;
 using NetExchange;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace testApp
 {
@@ -13,7 +22,12 @@ namespace testApp
             Task.Run(() => RtuMessageService());
             Task.Run(() => ExtMessageService());
             Task.Run(() => CmdMessageService());
+            timer1.Interval = 500;
+            timer1.Start();
+            timer1.Tick += timer1_Tick;
         }
+
+
         #region grpc
 
 
@@ -157,6 +171,7 @@ namespace testApp
             {
             });
 
+
             rtuLink.RequestStream.WriteAsync(new RtuMessage
             {
                 Channel = channel,
@@ -175,7 +190,30 @@ namespace testApp
 
             this.Invoke((MethodInvoker)delegate ()
             {
-
+                switch (deviceId)
+                {
+                    case 0x24A16057C915:
+                        if (acknowledgeNumber == 0) device1Data(payload);
+                        break;
+                    case 0x500291A40A61:
+                        if (acknowledgeNumber == 0) device2Data(payload);
+                        break;
+                    case 0x4C7525C1CF81:
+                        if (acknowledgeNumber == 0) device3Data(payload);
+                        break;
+                    case 0x4C7525C1CF71:
+                        if (acknowledgeNumber == 0) device4Data(payload);
+                        break;
+                    case 0x500291AEBEF1:
+                        if (acknowledgeNumber == 0) device5Data(payload);
+                        break;
+                    case 0x500291a45d2d:
+                        if (acknowledgeNumber == 0) sensor1Data(payload);
+                        break;
+                    case 0x4c75258912f5:
+                        if (acknowledgeNumber == 0) sensor2Data(payload);
+                        break;
+                }
             });
 
             switch (channel)
@@ -188,6 +226,7 @@ namespace testApp
                     break;
             }
         }
+
 
         public void TxExt(UInt64 context, UInt32 gatewayId, UInt64 deviceId, byte[] payload)
         {
@@ -259,7 +298,7 @@ namespace testApp
             }
         }
         #endregion
-        
+
         #region 제어 함수
 
         ushort opid = 0;
@@ -389,6 +428,117 @@ namespace testApp
 
         #endregion
 
+        #region 센서,노드정보 타이머
+
+        System.Windows.Forms.Timer timer1 = new System.Windows.Forms.Timer();
+
+        private void timer1_Tick(object? sender, EventArgs e)
+        {
+            getSensorData();
+        }
+
+        private void getSensorData()
+        {
+            int
+sequence = 0;
+
+
+            if (
+sequence == 7)
+
+                sequence = 0;
+            switch (
+sequence)
+            {
+
+                case 0:
+                    TxRtu(0, 0, 0x500291a45d2d, new byte[] { 0x01, 0x03, 0x00, 202, 0x00, 19 });
+                    break;
+
+                case 1:
+                    TxRtu(0, 0, 0x4c75258912f5, new byte[] { 0x01, 0x03, 0x00, 202, 0x00, 19 });
+                    break;
+                case 2:
+                    TxRtu(0, 0, 0x4c75258912f5, new byte[] { 0x01, 0x03, 0x00, 202, 0x00, 19 });
+                    break;
+                case 3:
+                    TxRtu(0, 0, 0x4c75258912f5, new byte[] { 0x01, 0x03, 0x00, 202, 0x00, 19 });
+                    break;
+                case 4:
+                    TxRtu(0, 0, 0x4c75258912f5, new byte[] { 0x01, 0x03, 0x00, 202, 0x00, 19 });
+                    break;
+                case 5:
+                    TxRtu(0, 0, 0x4c75258912f5, new byte[] { 0x01, 0x03, 0x00, 202, 0x00, 19 });
+                    break;
+                case 6:
+                    TxRtu(0, 0, 0x4c75258912f5, new byte[] { 0x01, 0x03, 0x00, 202, 0x00, 19 });
+                    break;
+            }
+            sequence++;
+
+
+        }
+
+
+
+        private void device1Data(byte[] payload)
+        {
+
+        }
+
+        private void device3Data(byte[] payload)
+        {
+
+
+        }
+
+        private void device2Data(byte[] payload)
+        {
+
+
+        }
+
+        private void device4Data(byte[] payload)
+        {
+
+
+        }
+
+        private void device5Data(byte[] payload)
+        {
+
+        }
+
+        private void sensor2Data(byte[] payload)
+        {
+            richTextBox2.Text = $"온도 : {BitConverter.ToSingle(BitConverter.GetBytes(GetFloat(payload[5], payload[6], payload[7], payload[8])), 0).ToString("0.00")}" + Environment.NewLine
+               + $"습도 : {BitConverter.ToSingle(BitConverter.GetBytes(GetFloat(payload[23], payload[24], payload[25], payload[26])), 0).ToString("0.00")}" + Environment.NewLine
+               + $"이산화탄소 : {BitConverter.ToSingle(BitConverter.GetBytes(GetFloat(payload[27 + 2], payload[28 + 2], payload[29 + 2], payload[30 + 2])), 0).ToString("0")}" + Environment.NewLine
+               + $"조도 : {BitConverter.ToSingle(BitConverter.GetBytes(GetFloat(payload[35], payload[36], payload[37], payload[38])), 0).ToString("0")}";
+
+        }
+
+        private void sensor1Data(byte[] payload)
+        {
+
+            richTextBox3.Text = $"온도 : {BitConverter.ToSingle(BitConverter.GetBytes(GetFloat(payload[5], payload[6], payload[7], payload[8])), 0).ToString("0.00")}" + Environment.NewLine
+                + $"습도 : {BitConverter.ToSingle(BitConverter.GetBytes(GetFloat(payload[23], payload[24], payload[25], payload[26])), 0).ToString("0.00")}" + Environment.NewLine
+                + $"이산화탄소 : {BitConverter.ToSingle(BitConverter.GetBytes(GetFloat(payload[27 + 2], payload[28 + 2], payload[29 + 2], payload[30 + 2])), 0).ToString("0")}" + Environment.NewLine
+                + $"조도 : {BitConverter.ToSingle(BitConverter.GetBytes(GetFloat(payload[35], payload[36], payload[37], payload[38])), 0).ToString("0")}";
+
+        }
+        float GetFloat(byte a, byte b, byte c, byte d)
+        {
+            byte[] rData = new byte[4];
+            rData[0] = b;
+            rData[1] = a;
+            rData[2] = d;
+            rData[3] = c;
+
+            return BitConverter.ToSingle(rData, 0);
+        }
+        #endregion
+
         #region device1
 
         private void left1_Click(object sender, EventArgs e)
@@ -402,10 +552,10 @@ namespace testApp
 
         private void timedLeft1_Click(object sender, EventArgs e)
         {
-          int time = 0;
+            int time = 0;
             if (!string.IsNullOrWhiteSpace(timebox1.Text) & int.TryParse(timebox1.Text, out time))
             {
-                timedLeftTurn(0, ulong.Parse(device1Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber),time);
+                timedLeftTurn(0, ulong.Parse(device1Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber), time);
             }
             else
             {
@@ -418,14 +568,14 @@ namespace testApp
             int time = 0;
             if (!string.IsNullOrWhiteSpace(timebox2.Text) & int.TryParse(timebox2.Text, out time))
             {
-                timedRightTurn(0, ulong.Parse(device1Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber),time);
+                timedRightTurn(0, ulong.Parse(device1Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber), time);
             }
             else
             {
                 MessageBox.Show("시간을 확인해주세요.", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        
-    }
+
+        }
 
         private void reset1_Click(object sender, EventArgs e)
         {
@@ -455,8 +605,8 @@ namespace testApp
             int time = 0;
             if (!string.IsNullOrWhiteSpace(timebox3.Text) & int.TryParse(timebox3.Text, out time))
             {
-                timedSwitch1ON(0, ulong.Parse(device2Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber),time);
-        }
+                timedSwitch1ON(0, ulong.Parse(device2Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber), time);
+            }
             else
             {
                 MessageBox.Show("시간을 확인해주세요.", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -468,13 +618,13 @@ namespace testApp
             int time = 0;
             if (!string.IsNullOrWhiteSpace(timebox4.Text) & int.TryParse(timebox4.Text, out time))
             {
-                timedSwitch2ON(0, ulong.Parse(device2Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber),time);
-        }
+                timedSwitch2ON(0, ulong.Parse(device2Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber), time);
+            }
             else
             {
                 MessageBox.Show("시간을 확인해주세요.", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-}
+        }
 
 
         private void switch1OFF2_Click(object sender, EventArgs e)
@@ -509,7 +659,7 @@ namespace testApp
         private void timedSwitch2ON3_Click(object sender, EventArgs e)
         {
             int time;
-            if (!string.IsNullOrWhiteSpace(timebox5.Text) &&int.TryParse(timebox5.Text,out time))
+            if (!string.IsNullOrWhiteSpace(timebox5.Text) && int.TryParse(timebox5.Text, out time))
             {
 
                 timedSwitch1ON(0, ulong.Parse(device3Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber), time);
@@ -519,14 +669,14 @@ namespace testApp
             {
                 MessageBox.Show("시간을 확인해주세요.", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-}
+        }
         private void timedSwitch1ON3_Click(object sender, EventArgs e)
         {
             int time;
-            if (!string.IsNullOrWhiteSpace(timebox6.Text)&&int.TryParse(timebox6.Text,out time))
+            if (!string.IsNullOrWhiteSpace(timebox6.Text) && int.TryParse(timebox6.Text, out time))
             {
 
-            timedSwitch2ON(0, ulong.Parse(device3Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber),time);
+                timedSwitch2ON(0, ulong.Parse(device3Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber), time);
             }
             else
             {
@@ -566,10 +716,10 @@ namespace testApp
         private void timedSwitch1ON4_Click(object sender, EventArgs e)
         {
             int time;
-            if (!string.IsNullOrWhiteSpace(timebox7.Text)&&int.TryParse(timebox7.Text,out time))
+            if (!string.IsNullOrWhiteSpace(timebox7.Text) && int.TryParse(timebox7.Text, out time))
             {
 
-            timedSwitch1ON(0, ulong.Parse(device4Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber),time);
+                timedSwitch1ON(0, ulong.Parse(device4Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber), time);
             }
             else
             {
@@ -583,7 +733,7 @@ namespace testApp
             if (!string.IsNullOrWhiteSpace(timebox8.Text) && int.TryParse(timebox8.Text, out time))
             {
 
-            timedSwitch2ON(0, ulong.Parse(device4Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber),time);
+                timedSwitch2ON(0, ulong.Parse(device4Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber), time);
             }
             else
             {
@@ -637,7 +787,7 @@ namespace testApp
             if (!string.IsNullOrWhiteSpace(timebox9.Text) && int.TryParse(timebox9.Text, out time))
             {
 
-            timedSwitch1ON(0, ulong.Parse(device5Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber),time);
+                timedSwitch1ON(0, ulong.Parse(device5Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber), time);
             }
             else
             {
@@ -658,20 +808,11 @@ namespace testApp
             }
         }
 
-            private void reset5_Click(object sender, EventArgs e)
+        private void reset5_Click(object sender, EventArgs e)
         {
             Reset(0, ulong.Parse(device5Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber));
         }
         #endregion
 
-        private void device5Box_Enter(object sender, EventArgs e)
-        {
-
-        }
-
-        private void device3Box_Enter(object sender, EventArgs e)
-        {
-
-        }
     }
 }
