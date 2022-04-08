@@ -22,9 +22,7 @@ namespace testApp
             Task.Run(() => RtuMessageService());
             Task.Run(() => ExtMessageService());
             Task.Run(() => CmdMessageService());
-            timer1.Interval = 500;
-            timer1.Start();
-            timer1.Tick += timer1_Tick;
+   
         }
 
 
@@ -437,78 +435,136 @@ namespace testApp
             getSensorData();
         }
 
+        int sequence = 0;
         private void getSensorData()
         {
-            int
-sequence = 0;
 
 
-            if (
-sequence == 7)
-
-                sequence = 0;
-            switch (
-sequence)
+            if (sequence == 2)sequence = 0;
+            switch (sequence)
             {
-
                 case 0:
                     TxRtu(0, 0, 0x500291a45d2d, new byte[] { 0x01, 0x03, 0x00, 202, 0x00, 19 });
                     break;
-
                 case 1:
                     TxRtu(0, 0, 0x4c75258912f5, new byte[] { 0x01, 0x03, 0x00, 202, 0x00, 19 });
                     break;
-                case 2:
-                    TxRtu(0, 0, 0x4c75258912f5, new byte[] { 0x01, 0x03, 0x00, 202, 0x00, 19 });
-                    break;
-                case 3:
-                    TxRtu(0, 0, 0x4c75258912f5, new byte[] { 0x01, 0x03, 0x00, 202, 0x00, 19 });
-                    break;
-                case 4:
-                    TxRtu(0, 0, 0x4c75258912f5, new byte[] { 0x01, 0x03, 0x00, 202, 0x00, 19 });
-                    break;
-                case 5:
-                    TxRtu(0, 0, 0x4c75258912f5, new byte[] { 0x01, 0x03, 0x00, 202, 0x00, 19 });
-                    break;
-                case 6:
-                    TxRtu(0, 0, 0x4c75258912f5, new byte[] { 0x01, 0x03, 0x00, 202, 0x00, 19 });
-                    break;
+                //case 2:
+                //    TxRtu(0, 0, 0x24A16057C915, new byte[] { 0x01, 0x03, 0x00, 202, 0x00, 13 });
+                //    break;
+                //case 3:
+                //    TxRtu(0, 0, 0x500291A40A61, new byte[] { 0x01, 0x03, 0x00, 202, 0x00, 13 });
+                //    break;
+                //case 4:
+                //    TxRtu(0, 0, 0x4C7525C1CF81, new byte[] { 0x01, 0x03, 0x00, 202, 0x00, 13 });
+                //    break;
+                //case 5:
+                //    TxRtu(0, 0, 0x4C7525C1CF71, new byte[] { 0x01, 0x03, 0x00, 202, 0x00, 13 });
+                //    break;
+                //case 6:
+                //    TxRtu(0, 0, 0x500291AEBEF1, new byte[] { 0x01, 0x03, 0x00, 202, 0x00, 13 });
+                //    break;
             }
             sequence++;
 
 
         }
 
-
-
+ 
         private void device1Data(byte[] payload)
         {
+            상태1.Text = "";
+            상태코드1.Text = "";
+            남은시간1.Text = "";
 
+            상태2.Text = "";
+            상태코드2.Text = "";
+            남은시간2.Text = "";
         }
 
         private void device3Data(byte[] payload)
         {
 
+            상태3.Text = "";
+            상태코드3.Text = "";
+            남은시간3.Text = "";
+
+            상태4.Text = "";
+            상태코드4.Text = "";
+            남은시간4.Text = "";
 
         }
 
         private void device2Data(byte[] payload)
         {
+            상태5.Text = "";
+            상태코드5.Text = "";
+            남은시간5.Text = "";
 
+            상태6.Text = "";
+            상태코드6.Text = "";
+            남은시간6.Text = "";
 
         }
 
         private void device4Data(byte[] payload)
         {
+            상태7.Text = "";
+            상태코드7.Text = "";
+            남은시간7.Text = "";
 
+            상태8.Text = "";
+            상태코드8.Text = "";
+            남은시간8.Text = "";
 
         }
 
         private void device5Data(byte[] payload)
         {
+            float voltageFloat = GetFloatState(payload[21], payload[22], payload[23], payload[24]);
+            float CurrentFloat = GetFloatState(payload[13], payload[14], payload[15], payload[16]);
+
+            상태9.Text = "";
+            상태코드9.Text = "";
+            남은시간9.Text = "";
+            전압.Text = Convert.ToString(voltageFloat);
+            전류.Text = Convert.ToString(CurrentFloat);
+
+            float GetFloatState(byte a, byte b, byte c, byte d)
+            {
+                byte[] rData = new byte[4];
+                if (BitConverter.IsLittleEndian) Array.Reverse(rData);
+                rData[0] = b;
+                rData[1] = a;
+                rData[2] = d;
+                rData[3] = c;
+
+                return BitConverter.ToSingle(rData, 0);
+            }
 
         }
+        static string switchStateCode(int a)
+        {
+            string outputText = "";
+            if (a == 0) outputText = "OFF";
+            if (a == 1) outputText = "ERROR";
+            if (a == 201) outputText = "ON";
+            if (a == 202) outputText = "TIMED_ON";
 
+            return outputText;
+        }
+        static string driverStateCodasde(int a)
+        {
+            string outputText = "";
+            if (a == 0) outputText = "STOP";
+            if (a == 1) outputText = "ERROR";
+            if (a == 303) outputText = "OPEN";
+            if (a == 304) outputText = "TIMED_CLOSE"; 
+            if (a == 303) outputText = "TIMED_OPEN";
+            if (a == 304) outputText = "TIMED_CLOSE";
+
+            return outputText;
+        }
         private void sensor2Data(byte[] payload)
         {
             richTextBox2.Text = $"온도 : {BitConverter.ToSingle(BitConverter.GetBytes(GetFloat(payload[5], payload[6], payload[7], payload[8])), 0).ToString("0.00")}" + Environment.NewLine
@@ -654,6 +710,20 @@ sequence)
         {
             switch2ON(0, ulong.Parse(device3Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber));
         }
+        private void timedSwitch1ON3_Click(object sender, EventArgs e)
+        {
+            int time;
+            if (!string.IsNullOrWhiteSpace(timebox6.Text) && int.TryParse(timebox6.Text, out time))
+            {
+
+                timedSwitch1ON(0, ulong.Parse(device3Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber), time);
+            }
+            else
+            {
+                MessageBox.Show("시간을 확인해주세요.", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
 
 
         private void timedSwitch2ON3_Click(object sender, EventArgs e)
@@ -662,28 +732,14 @@ sequence)
             if (!string.IsNullOrWhiteSpace(timebox5.Text) && int.TryParse(timebox5.Text, out time))
             {
 
-                timedSwitch1ON(0, ulong.Parse(device3Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber), time);
-
-            }
-            else
-            {
-                MessageBox.Show("시간을 확인해주세요.", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-        private void timedSwitch1ON3_Click(object sender, EventArgs e)
-        {
-            int time;
-            if (!string.IsNullOrWhiteSpace(timebox6.Text) && int.TryParse(timebox6.Text, out time))
-            {
-
                 timedSwitch2ON(0, ulong.Parse(device3Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber), time);
+
             }
             else
             {
                 MessageBox.Show("시간을 확인해주세요.", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         private void switch1OFF3_Click(object sender, EventArgs e)
         {
             switch1OFF(0, ulong.Parse(device3Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber));
@@ -704,12 +760,12 @@ sequence)
 
         private void switch1ON4_Click(object sender, EventArgs e)
         {
-            switch1ON(0, ulong.Parse(device4Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber));
+            switch1ON(0, ulong.Parse(groupBox5.Text.ToString(), System.Globalization.NumberStyles.HexNumber));
         }
 
         private void switch2ON4_Click(object sender, EventArgs e)
         {
-            switch2ON(0, ulong.Parse(device4Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber));
+            switch2ON(0, ulong.Parse(groupBox5.Text.ToString(), System.Globalization.NumberStyles.HexNumber));
         }
 
 
@@ -719,7 +775,7 @@ sequence)
             if (!string.IsNullOrWhiteSpace(timebox7.Text) && int.TryParse(timebox7.Text, out time))
             {
 
-                timedSwitch1ON(0, ulong.Parse(device4Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber), time);
+                timedSwitch1ON(0, ulong.Parse(groupBox5.Text.ToString(), System.Globalization.NumberStyles.HexNumber), time);
             }
             else
             {
@@ -733,7 +789,7 @@ sequence)
             if (!string.IsNullOrWhiteSpace(timebox8.Text) && int.TryParse(timebox8.Text, out time))
             {
 
-                timedSwitch2ON(0, ulong.Parse(device4Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber), time);
+                timedSwitch2ON(0, ulong.Parse(groupBox5.Text.ToString(), System.Globalization.NumberStyles.HexNumber), time);
             }
             else
             {
@@ -744,17 +800,17 @@ sequence)
 
         private void switch1OFF4_Click(object sender, EventArgs e)
         {
-            switch1OFF(0, ulong.Parse(device4Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber));
+            switch1OFF(0, ulong.Parse(groupBox5.Text.ToString(), System.Globalization.NumberStyles.HexNumber));
         }
 
         private void switch2OFF4_Click(object sender, EventArgs e)
         {
-            switch2OFF(0, ulong.Parse(device4Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber));
+            switch2OFF(0, ulong.Parse(groupBox5.Text.ToString(), System.Globalization.NumberStyles.HexNumber));
         }
 
         private void reset4_Click(object sender, EventArgs e)
         {
-            Reset(0, ulong.Parse(device4Box.Text.ToString(), System.Globalization.NumberStyles.HexNumber));
+            Reset(0, ulong.Parse(groupBox5.Text.ToString(), System.Globalization.NumberStyles.HexNumber));
         }
         #endregion
 
@@ -814,5 +870,26 @@ sequence)
         }
         #endregion
 
+        private void device2Box_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox5_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            timer1.Interval = 500;
+            timer1.Start();
+            timer1.Tick += timer1_Tick;
+        }
     }
 }
