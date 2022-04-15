@@ -470,7 +470,7 @@ namespace testApp
 
         }
 
- 
+
         private void device1Data(byte[] payload)
         {
             ป๓ลย1.Text = "";
